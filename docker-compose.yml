@@ -1,29 +1,17 @@
 version: "3.7"
 services:
-
-  # upstream app that is protected by the oauth2_proxy
   unleash:
     build: .
     ports:
       - "4242:4242"
-    networks: 
-      - default
     environment:
-      DATABASE_URL: postgres://postgres@db/postgres
+      DATABASE_URL: postgres://postgres:unleash@db/postgres
     depends_on:
       - db
     command: >
       sh -c "
         while ! nc -z db 5432; do
-          echo 'Postgres is unavailable 1.'
-          sleep 1
-        done
-
-        echo 'Pausing...'
-        sleep 3
-
-        while ! nc -z db 5432; do
-          echo 'Postgres is unavailable 2.'
+          echo 'Postgres is unavailable.'
           sleep 1
         done
 
@@ -36,8 +24,6 @@ services:
     image: postgres:10-alpine
     volumes:
       - db-data-x:/var/lib/postgresql/data
-    networks: 
-      - default
 
 volumes:
   db-data-x:
